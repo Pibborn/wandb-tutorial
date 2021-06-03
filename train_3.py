@@ -4,12 +4,19 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 import argparse
+import wandb
 
+# wandb stuff
+wandb.login()
+wandb.init(project='wandb-tutorial', entity='Pibborn', config='defaults.yaml')
+
+# argument loading
 parser = argparse.ArgumentParser(description='Train a simple SVR model.')
 parser.add_argument('--C', type=float, help='SVR slack', default=1.0)
 parser.add_argument('--max_features', type=int, help='TFIDF features', default=500)
 parser.add_argument('--kernel', type=str, help='SVR kernel', default='linear')
 args = parser.parse_args()
+
 
 # load data
 df = pd.read_csv('data/train.csv')
@@ -32,11 +39,13 @@ print('Transformed tf-idf features: {}'.format(x_train.shape))
 # train
 model = SVR(C=args.C, kernel=args.kernel)
 model.fit(x_train, y_train)
-y_pred = model.predict(x_val)
+y_pred = model.predict(x_test)
 
 # test
-score = mean_squared_error(y_val, y_pred, squared=False)
+score = mean_squared_error(y_test, y_pred, squared=False)
 print('Obtained score: {}'.format(score))
+wandb.log({'rmse': score})
+#wandb.sklearn.plot_regressor(model, x_train, x_val, y_train, y_val, model_name='SVR')
 
 
 

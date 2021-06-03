@@ -1,0 +1,9 @@
+C:
+  desc: SVR slack
+  value: 1.0
+max_features:
+  desc: TFIDF num max features
+  value: 600
+kernel:
+  desc: SVR kernel
+  value: linear
